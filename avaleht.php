@@ -26,24 +26,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->close();
     
         $conn = new mysqli($server_host, $server_user_name, $server_password, $dbname);
-        $stmt = $conn->prepare("SELECT id FROM kasutaja WHERE nimi = ?");
+        $stmt = $conn->prepare("SELECT id FROM kasutaja WHERE nimi = ? ORDER BY id DESC LIMIT 1");
         $stmt->bind_param("s", $name);
         $stmt->execute();
         $stmt->bind_result($id);
         echo $stmt->error;
         echo $conn->error;
-
+        
         if ($stmt->fetch()) {
             $_SESSION['kasutaja_id'] = $id;
             header('Location: test2.php');
-            
         } else {
             echo "Nothing found";
         }
-    
+        
         $stmt->close();
-        $conn->close(); 
-    } else {
+        $conn->close();
         echo "Palun täida vähemalt üks lahter, et saaksid simulaatorit kasutada";
     }
   } 

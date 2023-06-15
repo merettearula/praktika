@@ -30,12 +30,12 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(response => response.text())
       .then(data => {
         const csvData = parseCSVData(data);
-        playerData = {
+        /*playerData = {
           name: nameInput.value,
           education: educationInput.value,
           profession: professionInput.value,
           hobbies: hobbiesInput.value
-        };
+        };*/
   
         // Event listener for the start button
         document.getElementById('start-btn').addEventListener('click', () => {
@@ -90,9 +90,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             console.log("Score for previous answer: " + scoreValue);
-            if (scoreValue <= 0) {
+            if (scoreValue <= 1) {
               playVideo('video1');
-            } else if (scoreValue > 0) {
+            } else if (scoreValue > 1) {
               playVideo('video2');
             }
             
@@ -215,12 +215,15 @@ document.addEventListener('DOMContentLoaded', function() {
           let endScore = score;
   
           submitEndScore(score);
+          updateUnansweredQuestions(endScore);
+
           return endScore;
   
   
         }
   
-  
+        
+          
   
         function submitEndScore(score) {
             // Create an XMLHttpRequest object
@@ -248,8 +251,38 @@ document.addEventListener('DOMContentLoaded', function() {
             // Send the request
             xhr.send(data);
           }
+
+          /*uuendame vastamta küsimusi*/
           
-        
+          function updateUnansweredQuestions(score) {
+            var xhr = new XMLHttpRequest();
+            const lastQuestionNumber = csvData.length - 1;
+            console.log(lastQuestionNumber + "last");
+            const unansweredQuestions = lastQuestionNumber - currentQuestionIndex;
+            console.log(unansweredQuestions + " unanswered");
+          
+            // Prepare the data to be sent to the PHP file
+            var data = new FormData();
+            data.append('unansweredQuestions', unansweredQuestions);
+          
+            // Set up the AJAX request
+            xhr.open('POST', 'update_unanswered_questions.php', true);
+          
+            // Define the callback function for when the request is complete
+            xhr.onload = function () {
+              if (xhr.status === 200) {
+                // Request was successful
+                console.log(xhr.responseText);
+              } else {
+                // Request failed
+                console.error('Error:', xhr.status);
+              }
+            };
+          
+            // Send the request with the data
+            xhr.send(data);
+          }
+    
   
         function playVideo(videoId) {
           var defaultVideo = document.getElementById("default-video");
