@@ -3,10 +3,14 @@ session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if(isset($_POST['submit'])){
-    $name = $_POST['name'];
-    $education = $_POST['education'];
-    $profession = $_POST['profession'];
-    $hobbies = $_POST['hobbies'];
+        $name = $_POST['name'];
+        $education = $_POST['education'];
+        $profession = $_POST['profession'];
+        $hobbies = $_POST['hobbies'];
+        $_SESSION['name'] = $name;
+        $_SESSION['education'] = $education;
+        $_SESSION['profession'] = $profession;
+        $_SESSION['hobbies'] = $hobbies;
 
     // Check if at least one field is filled out
     if (!empty($name)) {
@@ -26,10 +30,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("s", $name);
         $stmt->execute();
         $stmt->bind_result($id);
-    
+        echo $stmt->error;
+        echo $conn->error;
+
         if ($stmt->fetch()) {
             $_SESSION['kasutaja_id'] = $id;
-            echo $_SESSION['kasutaja_id'];
+            header('Location: test2.php');
+            
         } else {
             echo "Nothing found";
         }
@@ -42,6 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   } 
 }
 
+echo '<script>';
+echo 'var sessionData = ' . json_encode($_SESSION) . ';';
+echo '</script>';
 
 ?> 
 
@@ -51,16 +61,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_disain.css">
     <script src="script.js"></script>
     <title>Tere tulemast</title>
 </head>
 <body>
-    <div id="container">
-        <div id="main">
-        <form method="POST" action="/~arulmere/statistika/index.php">
-            <label for="name">Sisesta oma nimi:</label>
-            <input type="text" name="name" id="name">
+<form method="POST" action="">
+    <div class="container">
+        <div id="start-section">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name">
             <label for="education">Vali oma haridustase:</label>
             <select id="education" name="education">
                 <option value="bakalaureus">Bakalaureus</option>
@@ -68,26 +78,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <option value="doktor">Doktor</option>
                 <option value="muu">Muu</option>
             </select>
-            <label for="profession">Sisesta oma amet:</label>
-            <input type="text" name="profession" id="profession">
-            <label for="hobbies">Sisesta oma hobid:</label>
-            <textarea type="text" name="hobbies" id="hobbies"></textarea>
-        </div>
-        <div id="buttonContainer">
-        
-            <input type="submit" name="submit" id="nextButton" value="Saada ära">
-        
-            <?php echo $_SESSION['kasutaja_id'];?>
+            <label for="profession">Profession:</label>
+            <input type="text" id="profession" name="profession">
+            <label for="hobbies">Hobbies:</label>
+            <input type="text" id="hobbies" name="hobbies">
+            <input type="submit" name="submit" id="start-btn" value="Start"></input>
+            <?php
+            if(isset($_SESSION['kasutaja_id'])){
+                echo $_SESSION['kasutaja_id'];
+            }
+             ?>
+        </form>
+        <div id="question-section" style="display: none;">
+      <h2 id="question"></h2>
+      <div id="answer-buttons"></div>
+      <button id="next-btn" disabled>Next Question</button>
+    </div>
 
+    <div id="end-section" style="display: none;">
+      <h2 id="end-title"></h2>
+      <p id="end-score"></p>
     </div>
-    <br><hr>
-    <!--
-    <div id="technicalContainer">Tehniline pool<br>
-        <button id="save">Salvesta andmed</button>
-        <button id="load">Laadi andmed</button>
-        <button id="delete">Kustuta andmed</button>
-    </div>
-    <div id="textContainer"> <br> Siia laeme andmed</div>
-    -->
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
+ 
