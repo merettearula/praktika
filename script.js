@@ -68,39 +68,23 @@ document.addEventListener('DOMContentLoaded', function() {
             const scoreValue = selectedAnswer.dataset.score;
             score += parseInt(scoreValue);
             const nextQuestionIndex = parseInt(selectedAnswer.dataset.nextquestion);
-  
-  
             console.log("Score for previous answer: " + scoreValue);         /////////
             
-  
-  
-  
-  
-  
             if (nextQuestionIndex >= 0) {
               currentQuestionIndex = nextQuestionIndex;
               displayNextQuestion();
-     //         console.log("nextQuestionIndex: " + nextQuestionIndex);
-              
             } else {
               showEndScreen();
-     //         console.log(nextQuestionIndex + " end");
-              console.log("End score: " + score);
-     //         submitEndScore(score);        // teeb all pool seda praegu
             }
-            
+
             console.log("Score for previous answer: " + scoreValue);
             if (scoreValue <= 1) {
               playVideo('video1');
-            } else if (scoreValue > 1) {
+            } else if (scoreValue > 0) {
               playVideo('video2');
             }
-            
-  
-  
           }
           console.log("Current score: " + score);
-          
         });
   
         // Function to parse the CSV data
@@ -189,22 +173,40 @@ document.addEventListener('DOMContentLoaded', function() {
         function showEndScreen() {
           questionSection.style.display = 'none';
           endSection.style.display = 'block';
-  
+
           const endScore = calculateEndScore();
           endScoreElement.innerText = endScore;
-  
+
           let endTitle = '';
-  
+          let retryButton = document.createElement('button');
+          let feedbackButton = document.createElement('button');
+
+          const percentage = endScore;
+
           if (endScore <= 30) {
-            endTitle = 'Title A';
+            endTitle = 'Kahjuks kukkusid läbi, sinu punktiskoor oli ' + percentage.toFixed(2) + '%';
           } else if (endScore <= 60) {
-            endTitle = 'Title B';
+            endTitle = 'Said intervjuust läbi, sinu punktiskoor oli ' + percentage.toFixed(2) + '%';
           } else {
             endTitle = 'Title C';
           }
-  
+
           endTitleElement.innerText = endTitle;
+
+          retryButton.innerText = 'Sooritan uuesti';
+          retryButton.addEventListener('click', function() {
+            window.location.href = 'https://greeny.cs.tlu.ee/~arulmere/terve_simulaator/test2.php'; // Replace 'retry.html' with the actual URL of the retry page
+          });
+
+          feedbackButton.innerText = 'Annan tagasisidet';
+          feedbackButton.addEventListener('click', function() {
+            window.location.href = 'https://greeny.cs.tlu.ee/~arulmere/statistika/'; // Replace 'feedback.html' with the actual URL of the feedback page
+          });
+
+          endSection.appendChild(retryButton);
+          endSection.appendChild(feedbackButton);
         }
+
   
         // Function to calculate the end score
         function calculateEndScore() {
@@ -217,8 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
           submitEndScore(score);
           updateUnansweredQuestions(endScore);
 
-          return endScore;
-  
+          return endScore
   
         }
   
