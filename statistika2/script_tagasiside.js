@@ -89,5 +89,20 @@ function sortTable(column, order) {
     xhr.send();
   }
 
-
+  function updateCheckbox(checkbox, id) {
+    var checked = checkbox.checked ? 1 : 0;
   
+    // Create an AJAX request
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState === 4 && this.status === 200) {
+        // Request was successful, do something if needed
+        console.log("Checkbox updated successfully.");
+      }
+    };
+  
+    // Send the checkbox value to the PHP script
+    var url = "submit_data.php?id=" + encodeURIComponent(id) + "&checked=" + encodeURIComponent(checked);
+    xhttp.open("GET", url, true);
+    xhttp.send();
+  }

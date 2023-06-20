@@ -54,17 +54,19 @@ if (isset($_GET["logout"])) {
         <th data-column="3">Tagasiside <span class="clickable" onclick="sortTable(3, 'asc')">&#x25B2;</span><span class="clickable" onclick="sortTable(3, 'desc')">&#x25BC;</span></th>
         <th data-column="4">Küsimus <span class="clickable" onclick="sortTable(4, 'asc')">&#x25B2;</span><span class="clickable" onclick="sortTable(4, 'desc')">&#x25BC;</span></th>
         <th data-column="5">Email <span class="clickable" onclick="sortTable(5, 'asc')">&#x25B2;</span><span class="clickable" onclick="sortTable(5, 'desc')">&#x25BC;</span></th>
+        <th data-column="6">Vastatud <span class="clickable" onclick="sortTable(5, 'asc')">&#x25B2;</span><span class="clickable" onclick="sortTable(5, 'desc')">&#x25BC;</span></th>
+
       </tr>
     </thead>
     <tbody>
     <?php
     require_once "../../config.php";
     $conn = new mysqli($server_host, $server_user_name, $server_password, $dbname);
-    $stmt = $conn->prepare("SELECT tagasiside.id, tagasiside.tagasiside, tagasiside.email, tagasiside.nupp, tagasiside.kysimus, tagasiside.kasutaja_id, tagasiside.lisatud_kuupaev, k.nimi FROM tagasiside tagasiside INNER JOIN kasutaja k ON tagasiside.kasutaja_id = k.id");
+    $stmt = $conn->prepare("SELECT tagasiside.id, tagasiside.tagasiside, tagasiside.email, tagasiside.nupp, tagasiside.kysimus, tagasiside.kasutaja_id, tagasiside.lisatud_kuupaev, tagasiside.vastatud, k.nimi FROM tagasiside tagasiside INNER JOIN kasutaja k ON tagasiside.kasutaja_id = k.id");
     $conn->set_charset("utf8");
     echo $conn->error;
     $stmt->execute();
-    $stmt->bind_result($id, $tagasiside, $email, $nupp, $kysimus, $kasutaja_id, $lisatud_kuupaev, $nimi);
+    $stmt->bind_result($id, $tagasiside, $email, $nupp, $kysimus, $kasutaja_id, $lisatud_kuupaev, $vastatud, $nimi);
 
     // Pagination variables
     $resultsPerPage = 22;
@@ -88,6 +90,7 @@ if (isset($_GET["logout"])) {
         echo "<td class='wrap-cell'>$tagasiside</td>";
         echo "<td class='wrap-cell'>$kysimus</td>";
         echo "<td class='wrap-cell'>$email</td>";
+        echo "<td class='wrap-cell'><input type='checkbox' name='vastatud_checkbox' onchange=\"updateCheckbox(this, " . $id . ")\" " . ($vastatud == 1 ? 'checked' : '') . "></td>";
         echo "</tr>";
       }
 
